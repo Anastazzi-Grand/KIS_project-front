@@ -8,6 +8,7 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { AddDialogDataComponent } from './addDialogData/addDialogData.component';
+import { ChangeDialogDataComponent } from './changeDialogData/changeDialogData.component';
 
 
 
@@ -70,6 +71,18 @@ export class SpecificationsComponent {
 
   openAddSpecificationDialog(): void {
     const dialogRef = this.dialog.open(AddDialogDataComponent, {
+      width: '400px', // задайте ширину окна по вашему усмотрению
+      data: {} // передайте данные при необходимости
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The add specification dialog was closed');
+      // обработка закрытия диалогового окна, если это необходимо
+    });
+  }
+
+  openChangeSpecificationDialog(): void {
+    const dialogRef = this.dialog.open(ChangeDialogDataComponent, {
       width: '400px', // задайте ширину окна по вашему усмотрению
       data: {} // передайте данные при необходимости
     });

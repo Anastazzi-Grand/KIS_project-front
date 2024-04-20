@@ -16,9 +16,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { Specification, SpecificationService } from '../../../services/specifications.service';
 import { catchError, of } from 'rxjs';
 
-
 @Component({
-  selector: 'app-add-dialog-data',
+  selector: 'app-change-dialog-data',
   standalone: true,
   imports: [
     CommonModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule,
@@ -31,15 +30,15 @@ import { catchError, of } from 'rxjs';
     MatDialogActions,
     MatDialogClose,
   ],
-  templateUrl: './addDialogData.component.html',
-  styleUrl: './addDialogData.component.css',
+  templateUrl: './changeDialogData.component.html',
+  styleUrl: './changeDialogData.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddDialogDataComponent {
+export class ChangeDialogDataComponent {
   parentSpecification!: number;
 
   constructor(
-    public dialogRef: MatDialogRef<AddDialogDataComponent>,
+    public dialogRef: MatDialogRef<ChangeDialogDataComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Specification,
     private specificationService: SpecificationService
   ) { }
@@ -53,8 +52,8 @@ export class AddDialogDataComponent {
         })
       )
       .subscribe(existingSpec => {
-        if (existingSpec !== null) {
-          console.error('Error: Specification with the same ID already exists.');
+        if (existingSpec === null) {
+          console.error('Error: Specification with that ID doesn`t exist.');
         } else {
             if (this.parentSpecification) {
             const parentSpecification: Specification = {
@@ -71,7 +70,7 @@ export class AddDialogDataComponent {
           }
   
           // Создаем новую спецификацию
-          this.specificationService.createSpecification(this.data).subscribe(
+          this.specificationService.updateSpecification(this.data.positionid, this.data).subscribe(
             (result) => {
               console.log('Specification created:', result);
               this.dialogRef.close(result);
@@ -87,5 +86,4 @@ export class AddDialogDataComponent {
   closeDialog(): void {
     this.dialogRef.close();
   }
-}
-
+ }
