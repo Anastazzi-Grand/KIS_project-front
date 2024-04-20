@@ -1,0 +1,16 @@
+<mat-card *ngFor="let order of dataOrders$ | async" class="example-card">
+    <mat-card-header>
+      <mat-card-title>Заказ</mat-card-title>
+      <mat-card-subtitle>Данные заказа</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>id: {{ order.id }}</p>
+      <p>Имя: {{ order.clientName }}</p>
+      <p>Дата заказа: {{ order.orderDate| date: 'dd.MM.yyyy' }}</p>
+      <p>Товар: {{ order.specificationId.description }} {{ order.count }} {{ order.measureUnit }}</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button>Изменить</button>
+      <button mat-button>Удалить</button>
+    </mat-card-actions>
+  </mat-card>
