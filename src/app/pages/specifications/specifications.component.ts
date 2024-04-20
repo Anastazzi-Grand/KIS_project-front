@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DataService, Specification, TransformSpecification } from '../../services/data.service';
+import { SpecificationService, Specification, TransformSpecification } from '../../services/specifications.service';
 import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from '@angular/material/tree';
 import { Observable, map } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon'
@@ -51,7 +51,7 @@ export class SpecificationsComponent {
     node => node.children,
   );
 
-  dataSpecifications$ = this.dataService.getSpecifications().pipe(
+  dataSpecifications$ = this.specificationService.getSpecifications().pipe(
     map(data => {
       const dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
       dataSource.data = this.buildTree(data)
@@ -63,7 +63,7 @@ export class SpecificationsComponent {
   );
 
 
-  constructor(private dataService: DataService) {
+  constructor(private specificationService: SpecificationService) {
     this.dataSpecifications$.subscribe()
   }
 

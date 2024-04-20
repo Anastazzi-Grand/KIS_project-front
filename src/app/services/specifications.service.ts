@@ -20,7 +20,7 @@ export interface TransformSpecification {
 @Injectable({
   providedIn: 'root'
 })
-export class DataService {
+export class SpecificationService {
 
   constructor(private http: HttpClient) { }
 

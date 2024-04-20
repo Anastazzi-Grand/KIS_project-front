@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
-import { DataService } from './services/data.service';
+import { SpecificationService } from './services/specifications.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
