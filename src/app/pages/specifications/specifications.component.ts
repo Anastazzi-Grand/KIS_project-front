@@ -55,8 +55,6 @@ export class SpecificationsComponent {
     map(data => {
       const dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
       dataSource.data = this.buildTree(data)
-      const transformedData = this.buildTree(data);
-      console.log(transformedData);
       console.log(this.buildTree(data));
       return dataSource! as unknown as FlatNode[];
     })
@@ -64,7 +62,7 @@ export class SpecificationsComponent {
 
 
   constructor(private specificationService: SpecificationService) {
-    this.dataSpecifications$.subscribe()
+    this.dataSpecifications$.subscribe();
   }
 
 buildTree(items: Specification[]): TransformSpecification[] {
