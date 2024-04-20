@@ -5,7 +5,10 @@ import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from '@angular
 import { Observable, map } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon'
 import { FlatTreeControl } from '@angular/cdk/tree';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { AddDialogDataComponent } from './addDialogData/addDialogData.component';
+
 
 
 interface FlatNode {
@@ -21,7 +24,7 @@ interface FlatNode {
   selector: 'app-specifications',
   standalone: true,
   imports: [
-    CommonModule, MatTreeModule, MatIconModule, MatButtonModule
+    CommonModule, MatTreeModule, MatIconModule, MatButtonModule,
   ],
   templateUrl: './specifications.component.html',
   styleUrl: './specifications.component.css',
@@ -61,45 +64,57 @@ export class SpecificationsComponent {
   );
 
 
-  constructor(private specificationService: SpecificationService) {
+  constructor(private specificationService: SpecificationService, public dialog: MatDialog) {
     this.dataSpecifications$.subscribe();
   }
 
-buildTree(items: Specification[]): TransformSpecification[] {
-  const rootNodes: TransformSpecification[] = [];
+  openAddSpecificationDialog(): void {
+    const dialogRef = this.dialog.open(AddDialogDataComponent, {
+      width: '400px', // задайте ширину окна по вашему усмотрению
+      data: {} // передайте данные при необходимости
+    });
 
-  const itemMap: Map<number, TransformSpecification> = new Map();
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The add specification dialog was closed');
+      // обработка закрытия диалогового окна, если это необходимо
+    });
+  }
 
-  // Сначала создаем все элементы и добавляем их в карту
-  for (const item of items) {
+  buildTree(items: Specification[]): TransformSpecification[] {
+    const rootNodes: TransformSpecification[] = [];
+
+    const itemMap: Map<number, TransformSpecification> = new Map();
+
+    // Сначала создаем все элементы и добавляем их в карту
+    for (const item of items) {
       const transformItem: TransformSpecification = {
-          positionid: item.positionid,
-          children: [], // Теперь children - это массив
-          description: item.description,
-          quantityPerParent: item.quantityPerParent,
-          unitMeasurement: item.unitMeasurement
+        positionid: item.positionid,
+        children: [], // Теперь children - это массив
+        description: item.description,
+        quantityPerParent: item.quantityPerParent,
+        unitMeasurement: item.unitMeasurement
       };
 
       itemMap.set(item.positionid, transformItem);
 
       if (!item.parent) {
-          rootNodes.push(transformItem);
+        rootNodes.push(transformItem);
       }
-  }
+    }
 
-  // Затем устанавливаем связи между родителями и детьми
-  for (const item of items) {
+    // Затем устанавливаем связи между родителями и детьми
+    for (const item of items) {
       if (item.parent) {
-          const parent = itemMap.get(item.parent.positionid);
-          const child = itemMap.get(item.positionid);
-          if (parent && child) {
-              parent.children.push(child);
-          }
+        const parent = itemMap.get(item.parent.positionid);
+        const child = itemMap.get(item.positionid);
+        if (parent && child) {
+          parent.children.push(child);
+        }
       }
-  }
+    }
 
-  return rootNodes;
-}
+    return rootNodes;
+  }
 
   hasChild = (_: number, node: FlatNode) => node.expandable;
 }

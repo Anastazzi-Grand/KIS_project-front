@@ -1,12 +1,14 @@
 <div>
-  
+  <button class="specification add" mat-raised-button (click)="openAddSpecificationDialog()">Добавить</button>
+  <button class="specification change" mat-raised-button (click)="7">Изменить</button>
+  <button class="specification delete" mat-raised-button (click)="7">Удалить</button>
 </div>
 <div class="tree">
   <h2>Список спецификаций</h2>
   <mat-tree [dataSource]="(dataSpecifications$ | async)!" [treeControl]="treeControl">
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
       <button mat-icon-button disabled></button>
-      {{node.name}} 
+      {{node.name}}
     </mat-tree-node>
     <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
       <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">

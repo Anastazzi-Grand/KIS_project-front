@@ -1,3 +1,16 @@
 :host {
   display: block;
 }
+
+.specification {
+  display: inline-block;
+  margin: 10px;
+}
+
+button.specification {
+  background-color: rgb(209, 115, 94); /* Ваш цвет */
+}
+
+.tree {
+  padding: 10px;
+}
