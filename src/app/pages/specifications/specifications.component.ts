@@ -1,23 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { SpecificationService, Specification, TransformSpecification } from '../../services/specifications.service';
 import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from '@angular/material/tree';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, shareReplay, switchMap, takeUntil } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon'
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { AddDialogDataComponent } from './addDialogData/addDialogData.component';
 import { ChangeDialogDataComponent } from './changeDialogData/changeDialogData.component';
+import { DeleteDialogDataComponent } from './deleteDialogData/deleteDialogData.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 
 
-interface FlatNode {
+export interface FlatNode {
   expandable: boolean;
   description: string;
   level: number;
-  id: number;
+  positionid: number;
   name: string;
+  parent: Specification | null;
+  parentPositionId: number | null;
+  quantityPerParent: number;
+  unitMeasurement: string;
 }
 
 
@@ -37,9 +42,13 @@ export class SpecificationsComponent {
     return {
       expandable: !!node.children && node.children.length > 0,
       description: node.description,
-      id: node.positionid,
+      positionid: node.positionid,
       level: level,
-      name: `${node.description}, id: ${node.positionid}`
+      name: `${node.description}, id: ${node.positionid}`,
+      parent: node.parent,
+      quantityPerParent: node.quantityPerParent,
+      unitMeasurement: node.unitMeasurement,
+      parentPositionId: node.parent?.positionid ?? null
     };
   };
 
@@ -55,41 +64,70 @@ export class SpecificationsComponent {
     node => node.children,
   );
 
-  dataSpecifications$ = this.specificationService.getSpecifications().pipe(
+  refresh$ = new BehaviorSubject(undefined);
+
+  dataSpecifications$ = this.refresh$.pipe(
+    switchMap(() => this.specificationService.getSpecifications()),
     map(data => {
       const dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
       dataSource.data = this.buildTree(data)
       console.log(this.buildTree(data));
       return dataSource! as unknown as FlatNode[];
-    })
+    }),
+    shareReplay(1)
   );
 
+  destroyRef = inject(DestroyRef)
 
   constructor(private specificationService: SpecificationService, public dialog: MatDialog) {
     this.dataSpecifications$.subscribe();
   }
 
   openAddSpecificationDialog(): void {
-    const dialogRef = this.dialog.open(AddDialogDataComponent, {
-      width: '400px', // задайте ширину окна по вашему усмотрению
-      data: {} // передайте данные при необходимости
+    const dialogRef = this.dialog.open(ChangeDialogDataComponent, {
+      width: '400px', 
+      data: null 
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(result => {
+      if (result) {
+        this.refresh$.next(undefined);
+      }
       console.log('The add specification dialog was closed');
-      // обработка закрытия диалогового окна, если это необходимо
     });
   }
 
-  openChangeSpecificationDialog(): void {
+  openChangeSpecificationDialog(node: FlatNode): void {
     const dialogRef = this.dialog.open(ChangeDialogDataComponent, {
-      width: '400px', // задайте ширину окна по вашему усмотрению
-      data: {} // передайте данные при необходимости
+      width: '400px',
+      data: node
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(result => {
+      if (result) {
+        this.refresh$.next(undefined);
+      }
       console.log('The add specification dialog was closed');
-      // обработка закрытия диалогового окна, если это необходимо
+    });
+  }
+
+  openDeleteSpecificationDialog(node: FlatNode): void {
+    const dialogRef = this.dialog.open(DeleteDialogDataComponent, {
+      width: '400px',
+      data: node.positionid
+    });
+
+    dialogRef.afterClosed().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(result => {
+      if (result) {
+        this.refresh$.next(undefined);
+      }
+      console.log('The add specification dialog was closed');
     });
   }
 
@@ -105,7 +143,9 @@ export class SpecificationsComponent {
         children: [], // Теперь children - это массив
         description: item.description,
         quantityPerParent: item.quantityPerParent,
-        unitMeasurement: item.unitMeasurement
+        unitMeasurement: item.unitMeasurement,
+        parent: item.parent ?? null,
+        parentPositionId: item.parent?.positionid ?? null
       };
 
       itemMap.set(item.positionid, transformItem);

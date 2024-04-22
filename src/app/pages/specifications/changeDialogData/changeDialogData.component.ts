@@ -10,11 +10,12 @@ import {
   MatDialogClose,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { Specification, SpecificationService } from '../../../services/specifications.service';
+import { SendSpecification, Specification, SpecificationService, TransformSpecification } from '../../../services/specifications.service';
 import { catchError, of } from 'rxjs';
+import { FlatNode } from '../specifications.component';
 
 @Component({
   selector: 'app-change-dialog-data',
@@ -29,6 +30,7 @@ import { catchError, of } from 'rxjs';
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
+    ReactiveFormsModule
   ],
   templateUrl: './changeDialogData.component.html',
   styleUrl: './changeDialogData.component.css',
@@ -36,51 +38,52 @@ import { catchError, of } from 'rxjs';
 })
 export class ChangeDialogDataComponent {
   parentSpecification!: number;
+  form!: FormGroup;
+  isNewSpecification = false;
 
   constructor(
     public dialogRef: MatDialogRef<ChangeDialogDataComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Specification,
-    private specificationService: SpecificationService
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: FlatNode,
+    private specificationService: SpecificationService, 
+    private formBuilder: FormBuilder
+  ) { 
+    this.isNewSpecification = !this.data;
+    const formdata = this.isNewSpecification ? {
+      positionid: null,
+      description: null,
+      quantityPerParent: null,
+      unitMeasurement: null,
+      parentPositionId: null
+    } : this.data;
+    console.log(formdata)
+    this.form = this.formBuilder.group(formdata);
+  }
 
   submitSpecification(): void {
-    this.specificationService.getSpecificationById(this.data.positionid)
-      .pipe(
-        catchError(error => {
-          console.error('Error retrieving specification:', error);
-          return of(null);
-        })
-      )
-      .subscribe(existingSpec => {
-        if (existingSpec === null) {
-          console.error('Error: Specification with that ID doesn`t exist.');
-        } else {
-            if (this.parentSpecification) {
-            const parentSpecification: Specification = {
-              positionid: this.parentSpecification,
-              parent: null,
-              description: '',
-              quantityPerParent: 0,
-              unitMeasurement: ''
-            };
-  
-            this.data.parent = parentSpecification;
-          } else {
-            this.data.parent = null;
-          }
-  
-          // Создаем новую спецификацию
-          this.specificationService.updateSpecification(this.data.positionid, this.data).subscribe(
-            (result) => {
-              console.log('Specification created:', result);
-              this.dialogRef.close(result);
-            },
-            (error) => {
-              console.error('Error creating specification:', error);
-            }
-          );
-        }
-      });
+    if (this.form.invalid) {
+      return;
+    }
+
+    const value = this.form.value as FlatNode;
+
+    const specification: SendSpecification = {
+      positionid: value.positionid,
+      parent: value.parentPositionId ?? null,
+      description: value.description,
+      quantityPerParent: value.quantityPerParent,
+      unitMeasurement: value.unitMeasurement
+    }
+
+    this.specificationService[this.isNewSpecification ? "createSpecification" : "updateSpecification"](specification).subscribe(
+      {next: (result) => {
+        console.log('Specification created:', result);
+        this.dialogRef.close(true);
+      },
+      error: (error) => {
+        console.error('Error creating specification:', error);
+      }}
+    );
+
   }
 
   closeDialog(): void {

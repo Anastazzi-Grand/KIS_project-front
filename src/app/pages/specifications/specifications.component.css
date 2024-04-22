@@ -7,6 +7,12 @@
   margin: 10px;
 }
 
+.specification__item {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
 button.specification {
   background-color: rgb(209, 115, 94); /* Ваш цвет */
 }

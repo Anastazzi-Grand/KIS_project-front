@@ -4,7 +4,15 @@ import { Observable } from 'rxjs';
 
 export interface Specification {
   positionid: number;
+  description: string;
+  quantityPerParent: number;
+  unitMeasurement: string;
   parent: Specification | null;
+}
+
+export interface SendSpecification {
+  positionid: number;
+  parent: number | null;
   description: string;
   quantityPerParent: number;
   unitMeasurement: string;
@@ -16,6 +24,8 @@ export interface TransformSpecification {
   description: string;
   quantityPerParent: number;
   unitMeasurement: string;
+  parent: Specification | null;
+  parentPositionId: number | null
 }
 
 const baseUrl = 'http://localhost:8080/api/specifications';
@@ -35,12 +45,12 @@ export class SpecificationService {
     return this.http.get<Specification>(`${baseUrl}/${id}`);
   }
 
-  createSpecification(specification: Specification): Observable<Specification> {
+  createSpecification(specification: SendSpecification): Observable<Specification> {
     return this.http.post<Specification>(baseUrl, specification);
   }
 
-  updateSpecification(id: number, specification: Specification): Observable<Specification> {
-    return this.http.put<Specification>(`${baseUrl}/${id}`, specification);
+  updateSpecification(specification: SendSpecification): Observable<Specification> {
+    return this.http.put<Specification>(`${baseUrl}/${specification.positionid}`, specification);
   }
 
   deleteSpecification(id: number) {

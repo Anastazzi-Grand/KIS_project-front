@@ -1,14 +1,22 @@
 <div>
   <button class="specification add" mat-raised-button (click)="openAddSpecificationDialog()">Добавить</button>
-  <button class="specification change" mat-raised-button (click)="openChangeSpecificationDialog()">Изменить</button>
-  <button class="specification delete" mat-raised-button (click)="7">Удалить</button>
+  <!-- <button class="specification change" mat-raised-button (click)="openChangeSpecificationDialog()">Изменить</button>
+  <button class="specification delete" mat-raised-button (click)="openDeleteSpecificationDialog()">Удалить</button> -->
 </div>
 <div class="tree">
   <h2>Список спецификаций</h2>
   <mat-tree [dataSource]="(dataSpecifications$ | async)!" [treeControl]="treeControl">
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
       <button mat-icon-button disabled></button>
-      {{node.name}}
+      <div class="specification__item">
+        <span>{{node.name}}</span>
+        <button mat-icon-button (click)="openChangeSpecificationDialog(node)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="openDeleteSpecificationDialog(node)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </mat-tree-node>
     <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
       <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name">
@@ -16,7 +24,15 @@
           {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
         </mat-icon>
       </button>
-      {{node.name}}
+      <div class="specification__item">
+        <span>{{node.name}}</span>
+        <button mat-icon-button (click)="openChangeSpecificationDialog(node)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="openDeleteSpecificationDialog(node)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </mat-tree-node>
   </mat-tree>
 </div>

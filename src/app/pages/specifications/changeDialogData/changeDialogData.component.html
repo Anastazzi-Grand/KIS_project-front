@@ -1,27 +1,29 @@
 <mat-dialog-content>
-    <p>Заполните поля для обновления спецификации:</p>
+  <p>Заполните поля для {{isNewSpecification ? "создания" : "обновления"}} спецификации:</p>
+  <form [formGroup]="form">
     <mat-form-field>
       <mat-label>Position ID</mat-label>
-      <input matInput [(ngModel)]="data.positionid" name="positionid">
+      <input matInput formControlName="positionid" required type="number">
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Parent Position ID</mat-label>
-      <input matInput [(ngModel)]="parentSpecification" name="parentPositionId">
+      <mat-label>Parent Position Id</mat-label>
+      <input matInput formControlName="parentPositionId" type="number">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Description</mat-label>
-      <input matInput [(ngModel)]="data.description" name="description">
+      <input matInput formControlName="description" required>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Quantity Per Parent</mat-label>
-      <input matInput [(ngModel)]="data.quantityPerParent" name="quantityPerParent">
+      <input matInput formControlName="quantityPerParent" type="number">
     </mat-form-field>
     <mat-form-field>
       <mat-label>Unit Measurement</mat-label>
-      <input matInput [(ngModel)]="data.unitMeasurement" name="unitMeasurement">
+      <input matInput formControlName="unitMeasurement">
     </mat-form-field>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button (click)="closeDialog()">Cancel</button>
-    <button mat-button (click)="submitSpecification()" cdkFocusInitial>Submit</button>
-  </mat-dialog-actions>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="closeDialog()">Cancel</button>
+  <button mat-button (click)="submitSpecification()" cdkFocusInitial>Submit</button>
+</mat-dialog-actions>
