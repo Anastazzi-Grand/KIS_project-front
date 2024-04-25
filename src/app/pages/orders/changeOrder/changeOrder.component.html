@@ -1,0 +1,29 @@
+<mat-dialog-content>
+    <p>Заполните поля для {{isNewOrder ? "создания" : "обновления"}} заказа:</p>
+    <form [formGroup]="form">
+      <mat-form-field>
+        <mat-label>Client Name</mat-label>
+        <input matInput formControlName="clientName" required>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Order Date</mat-label>
+        <input matInput formControlName="orderDate" type="date">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Count</mat-label>
+        <input matInput formControlName="count" type="number">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Measure Unit</mat-label>
+        <input matInput formControlName="measureUnit">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Specification ID</mat-label>
+        <input matInput formControlName="specificationId" required type="number">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="closeDialog()">Cancel</button>
+    <button mat-button (click)="submitOrder()" cdkFocusInitial>Submit</button>
+  </mat-dialog-actions>

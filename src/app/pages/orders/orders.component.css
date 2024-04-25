@@ -9,3 +9,11 @@
   background-color: antiquewhite;
 }
 
+.order {
+  display: inline-block;
+  margin: 10px;
+}
+
+button.order {
+  background-color: rgb(243, 223, 123); /* Ваш цвет */
+}

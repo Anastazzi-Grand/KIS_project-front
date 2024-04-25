@@ -27,7 +27,7 @@ export class StoragesComponent {
     shareReplay(1)
   );
 
-  destroyRef = inject(DestroyRef)
+  destroyRef = inject(DestroyRef);
 
   constructor(private storageService: StorageService, public dialog: MatDialog) {
     this.dataStorages$.subscribe();
@@ -65,7 +65,7 @@ export class StoragesComponent {
     });
   }
 
-  openDeleteStoragenDialog(node: Storage): void {
+  openDeleteStorageDialog(node: Storage): void {
     const dialogRef = this.dialog.open(DeleteStorageComponent, {
       width: '400px',
       data: node.idStorage
@@ -77,7 +77,7 @@ export class StoragesComponent {
       if (result) {
         this.refresh$.next(undefined);
       }
-      console.log('The delete specification dialog was closed');
+      console.log('The delete storage dialog was closed');
     });
   }
  }

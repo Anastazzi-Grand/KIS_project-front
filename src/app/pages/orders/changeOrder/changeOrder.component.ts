@@ -13,12 +13,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { SendStorage, StorageService } from '../../../services/storages.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { OrderService, SendOrder } from '../../../services/orders.service';
 
 @Component({
-  selector: 'app-change-storage',
+  selector: 'app-change-order',
   standalone: true,
   imports: [
     CommonModule,
@@ -33,55 +33,57 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatDialogClose,
     ReactiveFormsModule, MatDatepickerModule, MatNativeDateModule
   ],
-  templateUrl: './changeStorage.component.html',
-  styleUrl: './changeStorage.component.css',
+  templateUrl: './changeOrder.component.html',
+  styleUrl: './changeOrder.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChangeStorageComponent {
+export class ChangeOrderComponent {
   parentSpecification!: number;
   form!: FormGroup;
-  isNewStorage = false;
+  isNewOrder = false;
 
   constructor(
-    public dialogRef: MatDialogRef<ChangeStorageComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: SendStorage,
-    private storageService: StorageService, 
+    public dialogRef: MatDialogRef<ChangeOrderComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: SendOrder,
+    private orderService: OrderService, 
     private formBuilder: FormBuilder
   ) { 
-    this.isNewStorage = !this.data;
-    const formdata = this.isNewStorage ? {
-      idStorage: null,
-      date: null,
-      quantity: null,
-      typeOfOperation: null,
+    this.isNewOrder = !this.data;
+    const formdata = this.isNewOrder ? {
+      id: null,
+      clientName: null,
+      orderDate: null,
+      count: null,
+      measureUnit: null,
       specificationId: null
-    } : this.data;
+    } : data;
     console.log(formdata)
     this.form = this.formBuilder.group(formdata);
   }
 
-  submitStorage(): void {
+  submitOrder(): void {
     if (this.form.invalid) {
       return;
     }
 
-    const value = this.form.value as SendStorage;
+    const value = this.form.value as SendOrder;
 
-    const storage: SendStorage = {
-      idStorage: value.idStorage,
-      date: value.date,
-      quantity: value.quantity,
-      typeOfOperation: value.typeOfOperation,
-      specificationId: value.specificationId,
+    const order: SendOrder = {
+      id: value.id,
+      clientName: value.clientName,
+      orderDate: value.orderDate,
+      count: value.count,
+      measureUnit: value.measureUnit,
+      specificationId: value.specificationId
     }
 
-    this.storageService[this.storageService ? "createStorage" : "updateStorage"](storage).subscribe(
+    this.orderService[this.orderService ? "createOrder" : "updateOrder"](order).subscribe(
       {next: (result) => {
-        console.log('Storage created:', result);
+        console.log('Order created:', result);
         this.dialogRef.close(true);
       },
       error: (error) => {
-        console.error('Error creating storage:', error);
+        console.error('Error creating order:', error);
       }}
     );
 

@@ -1,0 +1,7 @@
+<mat-dialog-content>
+    <p>Вы точно хотите удалить заказ с id={{data}}:</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="closeDialog()">Нет</button>
+    <button mat-button (click)="submitOrder()" cdkFocusInitial>Да</button>
+</mat-dialog-actions>
