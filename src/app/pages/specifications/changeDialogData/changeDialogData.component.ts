@@ -14,7 +14,6 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { SendSpecification, Specification, SpecificationService, TransformSpecification } from '../../../services/specifications.service';
-import { catchError, of } from 'rxjs';
 import { FlatNode } from '../specifications.component';
 
 @Component({

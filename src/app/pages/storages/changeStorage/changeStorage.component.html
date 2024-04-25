@@ -1,0 +1,25 @@
+<mat-dialog-content>
+    <p>Заполните поля для {{isNewStorage ? "создания" : "обновления"}} товара на складе:</p>
+    <form [formGroup]="form">
+      <mat-form-field>
+        <mat-label>Date and Time</mat-label>
+        <input matInput formControlName="date" type="date" required>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Quantity</mat-label>
+        <input matInput formControlName="quantity" type="number">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Type of operation</mat-label>
+        <input matInput formControlName="typeOfOperation">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Specification ID</mat-label>
+        <input matInput formControlName="specificationId" required type="number">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="closeDialog()">Cancel</button>
+    <button mat-button (click)="submitStorage()" cdkFocusInitial>Submit</button>
+  </mat-dialog-actions>

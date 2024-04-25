@@ -140,7 +140,7 @@ export class SpecificationsComponent {
     for (const item of items) {
       const transformItem: TransformSpecification = {
         positionid: item.positionid,
-        children: [], // Теперь children - это массив
+        children: [], 
         description: item.description,
         quantityPerParent: item.quantityPerParent,
         unitMeasurement: item.unitMeasurement,

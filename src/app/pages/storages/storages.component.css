@@ -8,3 +8,12 @@
   margin: 10px;
   background-color: rgb(243, 242, 226);
 }
+
+.storage {
+  display: inline-block;
+  margin: 10px;
+}
+
+button.storage {
+  background-color: rgb(230, 191, 101); /* Ваш цвет */
+}

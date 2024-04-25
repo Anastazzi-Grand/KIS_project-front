@@ -9,15 +9,14 @@ import {
   MatDialogActions,
   MatDialogClose,
 } from '@angular/material/dialog';
+import { StorageService } from '../../../services/storages.service';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { Specification, SpecificationService } from '../../../services/specifications.service';
-import { catchError, of } from 'rxjs';
 
 @Component({
-  selector: 'app-delete-dialog-data',
+  selector: 'app-delete-storage',
   standalone: true,
   imports: [
     CommonModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule,
@@ -30,22 +29,22 @@ import { catchError, of } from 'rxjs';
     MatDialogActions,
     MatDialogClose,
   ],
-  templateUrl: './deleteDialogData.component.html',
-  styleUrl: './deleteDialogData.component.css',
+  templateUrl: './deleteStorage.component.html',
+  styleUrl: './deleteStorage.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DeleteDialogDataComponent {
+export class DeleteStorageComponent { 
   constructor(
-    public dialogRef: MatDialogRef<DeleteDialogDataComponent>,
+    public dialogRef: MatDialogRef<DeleteStorageComponent>,
     @Inject(MAT_DIALOG_DATA) public data: number,
-    private specificationService: SpecificationService
+    private storageService: StorageService
   ) { }
 
-  submitSpecification(): void {
-    this.specificationService.deleteSpecification(this.data)
+  submitStorage(): void {
+    this.storageService.deleteStorage(this.data)
       .subscribe(
         () => {
-          console.log('Specification deleted successfully.');
+          console.log('Storage deleted successfully.');
           this.dialogRef.close(true);
         }
       );
