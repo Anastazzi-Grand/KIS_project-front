@@ -10,12 +10,14 @@ import {
   MatDialogClose,
 } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { SendStorage, StorageService } from '../../../services/storages.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { startWith } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-change-storage',
@@ -42,6 +44,8 @@ export class ChangeStorageComponent {
   form!: FormGroup;
   isNewStorage = false;
 
+  dateControl = new FormControl(new Date());
+
   constructor(
     public dialogRef: MatDialogRef<ChangeStorageComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SendStorage,
@@ -53,11 +57,12 @@ export class ChangeStorageComponent {
       idStorage: null,
       date: null,
       quantity: null,
-      typeOfOperation: null,
+      typeOfOperation: "приход",
       specificationId: null
     } : this.data;
     console.log(formdata)
     this.form = this.formBuilder.group(formdata);
+    this.dateControl.valueChanges.pipe(startWith(this.dateControl.value), takeUntilDestroyed())
   }
 
   submitStorage(): void {
@@ -75,7 +80,7 @@ export class ChangeStorageComponent {
       specificationId: value.specificationId,
     }
 
-    this.storageService[this.storageService ? "createStorage" : "updateStorage"](storage).subscribe(
+    this.storageService[this.isNewStorage ? "createStorage" : "updateStorage"](storage).subscribe(
       {next: (result) => {
         console.log('Storage created:', result);
         this.dialogRef.close(true);

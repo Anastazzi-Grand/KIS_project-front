@@ -56,9 +56,10 @@ export class ChangeOrderComponent {
       count: null,
       measureUnit: null,
       specificationId: null
-    } : data;
+    } : this.data;
     console.log(formdata)
     this.form = this.formBuilder.group(formdata);
+    //this.form.valueChanges.subscribe(e => console.log(e))
   }
 
   submitOrder(): void {
@@ -77,7 +78,7 @@ export class ChangeOrderComponent {
       specificationId: value.specificationId
     }
 
-    this.orderService[this.orderService ? "createOrder" : "updateOrder"](order).subscribe(
+    this.orderService[this.isNewOrder ? "createOrder" : "updateOrder"](order).subscribe(
       {next: (result) => {
         console.log('Order created:', result);
         this.dialogRef.close(true);

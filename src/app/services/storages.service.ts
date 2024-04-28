@@ -19,6 +19,13 @@ export interface SendStorage {
   specificationId: number;
 }
 
+export interface StatisticStorage {
+  date: string;
+  incoming: number;
+  outgoing: number;
+  currentRest: number;
+}
+
 const baseUrl = 'http://localhost:8080/api/storages';
 
 @Injectable({
@@ -29,7 +36,7 @@ export class StorageService {
   constructor(private http: HttpClient) { }
 
   getStorages() {
-    return this.http.get<Storage[]>(baseUrl);
+    return this.http.get<Storage[]>(`${baseUrl}/getStorages`, {params: {"date": new Date().toISOString()}});
   }
 
   getStorageById(id: number): Observable<Storage> {
@@ -50,5 +57,9 @@ export class StorageService {
 
   deleteStorage(id: number) {
     return this.http.delete(`${baseUrl}/${id}`);
+  }
+
+  getStorageHistoryBySpecificationId(id: number, params?: Record<string, string>) {
+    return this.http.get<StatisticStorage[]>(`${baseUrl}/getHistory/${id}`, {params});
   }
 }
