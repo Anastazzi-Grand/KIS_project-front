@@ -12,7 +12,6 @@ import { DeleteDialogDataComponent } from './deleteDialogData/deleteDialogData.c
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 
-
 export interface FlatNode {
   expandable: boolean;
   description: string;
@@ -30,13 +29,15 @@ export interface FlatNode {
   selector: 'app-specifications',
   standalone: true,
   imports: [
-    CommonModule, MatTreeModule, MatIconModule, MatButtonModule,
+    CommonModule, MatTreeModule, MatIconModule, MatButtonModule, 
   ],
   templateUrl: './specifications.component.html',
   styleUrl: './specifications.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class SpecificationsComponent {
+
 
   private _transformer = (node: TransformSpecification, level: number) => {
     return {

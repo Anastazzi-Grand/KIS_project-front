@@ -1,3 +1,18 @@
 :host {
   display: block;
 }
+
+.statistic {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+p {
+  color:rgb(22, 21, 21);
+}
+
+.statistic__error {
+  margin: 0 auto;
+  color: #ae4949;
+}
