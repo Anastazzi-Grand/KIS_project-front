@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChangeDialogDataComponent } from './changeDialogData/changeDialogData.component';
 import { DeleteDialogDataComponent } from './deleteDialogData/deleteDialogData.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 export interface FlatNode {
   expandable: boolean;
@@ -22,6 +22,7 @@ export interface FlatNode {
   parentPositionId: number | null;
   quantityPerParent: number;
   unitMeasurement: string;
+  children: TransformSpecification[];
 }
 
 
@@ -29,7 +30,7 @@ export interface FlatNode {
   selector: 'app-specifications',
   standalone: true,
   imports: [
-    CommonModule, MatTreeModule, MatIconModule, MatButtonModule, 
+    CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatTooltipModule
   ],
   templateUrl: './specifications.component.html',
   styleUrl: './specifications.component.css',
@@ -39,7 +40,7 @@ export interface FlatNode {
 export class SpecificationsComponent {
 
 
-  private _transformer = (node: TransformSpecification, level: number) => {
+  private _transformer = (node: TransformSpecification, level: number): FlatNode => {
     return {
       expandable: !!node.children && node.children.length > 0,
       description: node.description,
@@ -49,7 +50,8 @@ export class SpecificationsComponent {
       parent: node.parent,
       quantityPerParent: node.quantityPerParent,
       unitMeasurement: node.unitMeasurement,
-      parentPositionId: node.parent?.positionid ?? null
+      parentPositionId: node.parent?.positionid ?? null,
+      children: node.children
     };
   };
 
@@ -86,8 +88,8 @@ export class SpecificationsComponent {
 
   openAddSpecificationDialog(): void {
     const dialogRef = this.dialog.open(ChangeDialogDataComponent, {
-      width: '400px', 
-      data: null 
+      width: '400px',
+      data: null
     });
 
     dialogRef.afterClosed().pipe(
@@ -141,7 +143,7 @@ export class SpecificationsComponent {
     for (const item of items) {
       const transformItem: TransformSpecification = {
         positionid: item.positionid,
-        children: [], 
+        children: [],
         description: item.description,
         quantityPerParent: item.quantityPerParent,
         unitMeasurement: item.unitMeasurement,
@@ -171,4 +173,52 @@ export class SpecificationsComponent {
   }
 
   hasChild = (_: number, node: FlatNode) => node.expandable;
+/*
+  getDescription(node: FlatNode): string {
+    const hash: Record<string, number> = {};
+    this.getLastChildren(node).forEach(child => {
+      hash[child.description] = (hash[child.description] ?? 0) + 1;
+    })
+
+    return Object.keys(hash).reduce((prev, cur) => prev + `${cur}: ${hash[cur]};\n`, '');
+  }
+
+  private getLastChildren(node: FlatNode | TransformSpecification, set: Array<TransformSpecification> = []): TransformSpecification[] {
+    if (node?.children?.length) {
+      node.children.forEach(n => this.getLastChildren(n, set))
+    } else {
+      set.push(node);
+    }
+
+    return set;
+  }*/
+
+  getDescription(node: FlatNode): string {
+    const materialsMap: Record<string, { quantity: number, unit: string }> = {};
+  
+    this.getLastChildren(node).forEach(child => {
+      const { description, quantityPerParent, unitMeasurement } = child;
+      const key = description;
+  
+      if (materialsMap[key]) {
+        materialsMap[key].quantity += quantityPerParent;
+      } else {
+        materialsMap[key] = { quantity: quantityPerParent, unit: unitMeasurement };
+      }
+    });
+  
+    return Object.entries(materialsMap)
+      .map(([material, { quantity, unit }]) => `${material}: ${quantity} ${unit}`)
+      .join(', ');
+  }
+  
+  private getLastChildren(node: FlatNode | TransformSpecification, set: Array<TransformSpecification> = []): TransformSpecification[] {
+    if (node?.children?.length) {
+      node.children.forEach(n => this.getLastChildren(n, set))
+    } else {
+      set.push(node as TransformSpecification);
+    }
+  
+    return set;
+  }
 }

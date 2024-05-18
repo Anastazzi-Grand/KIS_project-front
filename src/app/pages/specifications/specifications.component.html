@@ -23,7 +23,7 @@
         </mat-icon>
       </button>
       <div class="specification__item">
-        <span>{{node.name}}</span>
+        <span class="specification__item-name" [matTooltip]="getDescription(node)">{{node.name}}</span>
         <button mat-icon-button (click)="openChangeSpecificationDialog(node)">
           <mat-icon>edit</mat-icon>
         </button>

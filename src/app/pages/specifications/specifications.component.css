@@ -20,3 +20,7 @@ button.specification {
 .tree {
   padding: 10px;
 }
+
+.specification__item-name {
+  cursor: help;
+}

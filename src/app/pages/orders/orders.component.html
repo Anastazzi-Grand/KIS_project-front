@@ -13,7 +13,6 @@
     <p>Товар: {{ order.specificationId.description }} {{ order.count }} {{ order.measureUnit }}</p>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button (click)="openChangeOrderDialog(order)">Изменить</button>
     <button mat-button (click)="openDeleteOrderDialog(order)">Удалить</button>
   </mat-card-actions>
 </mat-card>
