@@ -8,12 +8,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, Observable, map, shareReplay, switchMap, takeUntil } from 'rxjs';
 import { DeleteOrderComponent } from './deleteOrder/deleteOrder.component';
 import { ChangeOrderComponent } from './changeOrder/changeOrder.component';
+import { SpecificationsComponent } from '../specifications/specifications.component';
 
 @Component({
   selector: 'app-orders',
   standalone: true,
   imports: [
-    CommonModule, MatButtonModule, MatCardModule
+    CommonModule, MatButtonModule, MatCardModule, SpecificationsComponent
   ],
   templateUrl: `./orders.component.html`,
   styleUrl: './orders.component.css',

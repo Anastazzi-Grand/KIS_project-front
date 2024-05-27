@@ -16,6 +16,7 @@ import {provideNativeDateAdapter} from '@angular/material/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {MatTableModule} from '@angular/material/table';
 import { StatisticsStorageComponent } from './statistics-storage/statistics-storage.component';
+import { DeficitStorageComponent } from './deficitStorage/deficitStorage.component';
 
 @Component({
   selector: 'app-storages',
@@ -43,6 +44,7 @@ export class StoragesComponent {
   destroyRef = inject(DestroyRef);
 
   displayedColumns: string[] = ['positionid', 'description', 'quantity', 'unitMeasurement'];
+element: any;
 
   constructor(private storageService: StorageService, public dialog: MatDialog) {
     this.dateControl.valueChanges.pipe(startWith(this.dateControl.value), takeUntilDestroyed()).subscribe(date => console.log(date));
@@ -100,6 +102,19 @@ export class StoragesComponent {
     const dialog =  this.dialog.open(StatisticsStorageComponent, {
       width: '90vw',
       data: row
+    });
+
+    dialog.afterClosed().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(result => {
+      console.log('The statistic storage dialog was closed');
+    });
+  }
+
+  checkDeficit(): void{
+    const dialog =  this.dialog.open(DeficitStorageComponent, {
+      width: '150vw',
+      data: null 
     });
 
     dialog.afterClosed().pipe(

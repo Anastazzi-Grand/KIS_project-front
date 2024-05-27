@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { SpecificationService, Specification, TransformSpecification } from '../../services/specifications.service';
 import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from '@angular/material/tree';
-import { BehaviorSubject, Observable, map, shareReplay, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon'
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,7 +30,8 @@ export interface FlatNode {
   selector: 'app-specifications',
   standalone: true,
   imports: [
-    CommonModule, MatTreeModule, MatIconModule, MatButtonModule, MatTooltipModule
+    CommonModule, MatTreeModule, MatIconModule, 
+    MatButtonModule, MatTooltipModule
   ],
   templateUrl: './specifications.component.html',
   styleUrl: './specifications.component.css',
@@ -74,7 +75,7 @@ export class SpecificationsComponent {
     map(data => {
       const dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
       dataSource.data = this.buildTree(data)
-      console.log(this.buildTree(data));
+      //console.log(this.buildTree(data));
       return dataSource! as unknown as FlatNode[];
     }),
     shareReplay(1)
@@ -194,25 +195,66 @@ export class SpecificationsComponent {
   }*/
 
   getDescription(node: FlatNode): string {
+    const materialsMap = this.getMaterialsOfSpecification(node);
+  
+    let s = 'МАТЕРИАЛЫ ' + Object.entries(materialsMap)
+    .map(([material, { quantity, unit }]) => `${material}: ${quantity} ${unit}`)
+    .join(', ');
+
+    return s;
+  }
+
+  getMaterialsOfSpecification(node: FlatNode) : Record<string, { quantity: number, unit: string }> {
     const materialsMap: Record<string, { quantity: number, unit: string }> = {};
   
-    this.getLastChildren(node).forEach(child => {
-      const { description, quantityPerParent, unitMeasurement } = child;
+    const lastChildren = this.getLeafMaterials(node);
+
+    lastChildren.forEach(child => {
+      const { description, unitMeasurement, quantityPerParent } = child;
       const key = description;
+      const quantity = quantityPerParent;
   
       if (materialsMap[key]) {
-        materialsMap[key].quantity += quantityPerParent;
+        materialsMap[key].quantity += quantity;
       } else {
-        materialsMap[key] = { quantity: quantityPerParent, unit: unitMeasurement };
+        materialsMap[key] = { quantity, unit: unitMeasurement };
       }
     });
+
+    return materialsMap;
+  }
+
+  getLeafMaterials(node: FlatNode | TransformSpecification): TransformSpecification[] {
+    const leaves: TransformSpecification[] = [];
+    const lastChildren = this.getLastChildren(node);
   
-    return Object.entries(materialsMap)
-      .map(([material, { quantity, unit }]) => `${material}: ${quantity} ${unit}`)
-      .join(', ');
+    lastChildren.forEach(leaf => {
+      const { positionid, description, unitMeasurement, parent, parentPositionId } = leaf;
+      const quantity = this.calculateQuantityForLeaf(leaf);
+  
+      leaves.push({
+        positionid,
+        description,
+        quantityPerParent: quantity,
+        unitMeasurement,
+        parent,
+        parentPositionId,
+        children: []
+      });
+    });
+  
+    return leaves;
+  }
+
+  private calculateQuantityForLeaf(node: TransformSpecification) : number {
+    let quantity = node.quantityPerParent;
+    if (node.parent) {
+      quantity *= node.parent.quantityPerParent;
+    }
+    return quantity;
   }
   
-  private getLastChildren(node: FlatNode | TransformSpecification, set: Array<TransformSpecification> = []): TransformSpecification[] {
+  private getLastChildren(node: FlatNode | TransformSpecification, set: TransformSpecification[] = []): TransformSpecification[] {
     if (node?.children?.length) {
       node.children.forEach(n => this.getLastChildren(n, set))
     } else {

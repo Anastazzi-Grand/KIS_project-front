@@ -1,5 +1,6 @@
 <div>
   <button class="storage add" mat-raised-button (click)="openAddStorageDialog()">Добавить</button>
+  <button class="storage deficit" mat-raised-button (click)="checkDeficit()">Дефицит</button>
 </div>
 
 <table mat-table [dataSource]="(dataStorages$ | async)!" class="mat-elevation-z8 demo-table">

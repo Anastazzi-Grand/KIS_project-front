@@ -12,7 +12,7 @@ export interface Storage {
 }
 
 export interface SendStorage {
-  idStorage: number;
+  //idStorage: number;
   date: string;
   quantity: number;
   typeOfOperation: string;
@@ -51,9 +51,13 @@ export class StorageService {
     return this.http.post<Storage>(baseUrl, storage);
   }
 
-  updateStorage(storage: SendStorage): Observable<Storage> {
-    return this.http.put<Storage>(`${baseUrl}/${storage.idStorage}`, storage);
+  getDeficitStorages() {
+    return this.http.get<Storage[]>(`${baseUrl}/getDeficitStorages`);
   }
+
+  /*updateStorage(storage: SendStorage): Observable<Storage> {
+    return this.http.put<Storage>(`${baseUrl}/${storage.idStorage}`, storage);
+  }*/
 
   deleteStorage(id: number) {
     return this.http.delete(`${baseUrl}/${id}`);

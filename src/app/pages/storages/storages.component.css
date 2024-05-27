@@ -9,11 +9,13 @@
   background-color: rgb(243, 242, 226);
 }
 
-.storage {
-  display: inline-block;
+div {
+  display: flex;
+  justify-content: left;
   margin: 10px;
+  gap: 30px;
 }
 
 button.storage {
-  background-color: rgb(234, 238, 141); /* Ваш цвет */
+  background-color: rgb(234, 238, 141); 
 }

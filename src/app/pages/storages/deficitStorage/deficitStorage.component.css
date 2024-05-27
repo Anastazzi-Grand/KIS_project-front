@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+
+p {
+  margin: 10px;
+  font-family: arial;
+  font-size: 25px;
+}
+
+.mat-elevation-z8 {
+  width: 100%;
+  border-radius: 8px;
+  margin: 10px;
+}
+
+.table-container {
+  max-width: 95%;
+  margin: 0 auto;
+}
+
