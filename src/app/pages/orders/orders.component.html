@@ -7,7 +7,7 @@
     <mat-card-subtitle>Данные заказа</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <p>id: {{ order.id }}</p>
+    <!-- <p>id: {{ order.id }}</p> -->
     <p>Имя: {{ order.clientName }}</p>
     <p>Дата заказа: {{ order.orderDate| date: 'dd.MM.yyyy' }}</p>
     <p>Товар: {{ order.specificationId.description }} {{ order.count }} {{ order.measureUnit }}</p>

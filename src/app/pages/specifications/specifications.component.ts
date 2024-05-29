@@ -174,25 +174,6 @@ export class SpecificationsComponent {
   }
 
   hasChild = (_: number, node: FlatNode) => node.expandable;
-/*
-  getDescription(node: FlatNode): string {
-    const hash: Record<string, number> = {};
-    this.getLastChildren(node).forEach(child => {
-      hash[child.description] = (hash[child.description] ?? 0) + 1;
-    })
-
-    return Object.keys(hash).reduce((prev, cur) => prev + `${cur}: ${hash[cur]};\n`, '');
-  }
-
-  private getLastChildren(node: FlatNode | TransformSpecification, set: Array<TransformSpecification> = []): TransformSpecification[] {
-    if (node?.children?.length) {
-      node.children.forEach(n => this.getLastChildren(n, set))
-    } else {
-      set.push(node);
-    }
-
-    return set;
-  }*/
 
   getDescription(node: FlatNode): string {
     const materialsMap = this.getMaterialsOfSpecification(node);
